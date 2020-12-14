@@ -329,8 +329,9 @@ class QaModule():
     def makeFormatAnswersList(self, answers):
         format_answer_list = []
         for answer in answers:
-            format_answers = []
+            # format_answers = []
             for i in range(len(answer['data']['answer'])):
+                format_answers = []
                 format_answer = {}
                 format_answer['question'] = answer['question']
                 format_answer['answer'] = answer['data']['answer'][i]
@@ -340,7 +341,7 @@ class QaModule():
                 format_answer["confidence"] = answer['data']['confidence'][i]
                 format_answer["raw"] = answer['data']['raw'][i]
                 format_answers.append(format_answer)
-            format_answer_list.append(format_answers)
+                format_answer_list.append(format_answers)
         return format_answer_list
 
 

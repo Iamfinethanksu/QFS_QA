@@ -5,7 +5,7 @@ import argparse
 
 
 import json
-from retrieval import information_retrieval
+# from retrieval import information_retrieval
 from qa import QaModule, print_answers_in_file, rankAnswers, rankAnswersList
 pp = pprint.PrettyPrinter(indent=4)
 
@@ -39,8 +39,8 @@ def information_retrieval_fake(file_path):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--ans_prob_output_file_path", type=str, default='/home/sudan/AAAI2021/QFS_QA/Debatepedia_Output/valid.ans_prob')
-    parser.add_argument("--file_source", type=str, default='/home/sudan/Kaggle/bart/data/Debatepedia/data_fold/1/valid.source')
+    parser.add_argument("--ans_prob_output_file_path", type=str, default='/home/sudan/AAAI2021/QFS_QA/Debatepedia_Output/train.ans_prob')
+    parser.add_argument("--file_source", type=str, default='/home/sudan/Kaggle/bart/data/Debatepedia/data_fold/1/train.source')
     parser.add_argument("--model_path", type=str, default="/home/xuyan/mrqa/xlnet-qa/experiment/multiqa-1e-5-tpu/1596112521")
     parser.add_argument("--spiece_model", type=str, default="/home/farhad/covid19data/qa_models/spiece.model")
     parser.add_argument("--bert_config", type=str, default="/home/farhad/covid19data/qa_models/bert_config.json")

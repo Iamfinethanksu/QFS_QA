@@ -600,7 +600,7 @@ RawResult = collections.namedtuple("RawResult",
 
 RawResult_qfs = collections.namedtuple("RawResult",
     ["unique_id", "start_top_log_probs", "start_top_index",
-    "end_top_log_probs", "end_top_index", "cls_logits", "ans_probs"])
+    "end_top_log_probs", "end_top_index", "cls_logits","ans_probs"])
 
 _PrelimPrediction = collections.namedtuple(  # pylint: disable=invalid-name
     "PrelimPrediction",
@@ -1022,6 +1022,8 @@ def mrqa_predictor_qfs(FLAGS, predict_fn, data, ans_prob_output_path):
     for x, y in zip(start_probs, end_probs):
       ans_prob = np.mean(x + y)
       ans_probs.append(ans_prob)
+
+    # ans_probs = start_probs
 
     # print("the length===")
     # print(len(start_probs))
