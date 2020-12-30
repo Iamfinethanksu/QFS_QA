@@ -620,7 +620,7 @@ _NbestPrediction_qfs = collections.namedtuple(  # pylint: disable=invalid-name
 
 
 def get_predictions_qfs(all_examples, all_features, all_results, n_best_size,
-                    max_answer_length, FLAGS, ans_prob_output_path):
+                    max_answer_length, FLAGS):
   """ save the answer relevance score to a seperate file.. for the query focused summarization task
   Write final predictions to the json file and log-odds of null if needed."""
   tf.logging.info("Getting predictions")
@@ -814,18 +814,16 @@ def get_predictions_qfs(all_examples, all_features, all_results, n_best_size,
   print("the lenght of all_ans_probs is {}".format(len(all_ans_probs)))
   print(all_ans_probs)
 
-  line = ''
+  ans_relevance_prob_line = ''
   for item in all_ans_probs:
-    print("==="*10)
-    print(item)
     for item_of_item in item:
-      line += str(item_of_item) + ' '
-    line += "\n"  
+      ans_relevance_prob_line += str(item_of_item) + ' '
+    ans_relevance_prob_line += "\n"  
 
-  with open(ans_prob_output_path, 'a') as outfile:
-    outfile.write(line)
+  # with open(ans_prob_output_path, 'a') as outfile:
+  #   outfile.write(line)
 
-  return all_predictions
+  return all_predictions, ans_relevance_prob_line
 
 
 
@@ -962,7 +960,7 @@ def input_fn_builder(input_glob, seq_length, is_training, drop_remainder,
   return input_fn
 
 
-def mrqa_predictor_qfs(FLAGS, predict_fn, data, ans_prob_output_path):
+def mrqa_predictor_qfs(FLAGS, predict_fn, data):
   """
   Get prediction with the data got fron mrqa official request.
   """
@@ -1067,10 +1065,10 @@ def mrqa_predictor_qfs(FLAGS, predict_fn, data, ans_prob_output_path):
           cls_logits=cls_logits,
           ans_probs=ans_probs))    
 
-  ret = get_predictions_qfs(eval_data, eval_features, cur_results,
+  ret, ans_relevance_prob_line = get_predictions_qfs(eval_data, eval_features, cur_results,
                         FLAGS.n_best_size, FLAGS.max_answer_length,
-                        FLAGS, ans_prob_output_path)
-  return dict(ret)
+                        FLAGS)
+  return dict(ret), ans_relevance_prob_line
 
 if __name__ == "__main__":
   pp = pprint.PrettyPrinter(indent=4)

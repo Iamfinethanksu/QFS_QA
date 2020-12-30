@@ -10,7 +10,7 @@ from qa import QaModule, print_answers_in_file, rankAnswers, rankAnswersList
 pp = pprint.PrettyPrinter(indent=4)
 
 
-def information_retrieval_fake(file_path):
+def read_data(file_path):
     # since we don't need a information retrieval function this time, this function will just format the input data to the format
     all_results = []
     data_for_qa = []
@@ -29,6 +29,9 @@ def information_retrieval_fake(file_path):
     f.close()
     return all_results, data_for_qa
 
+
+
+
 # tf 1.15.2  ["/home/xuyan/mrqa/xlnet-qa/experiment/multiqa-1e-5-tpu/1586435240", "/home/xuyan/kaggle/bioasq-biobert/model/1586435317"]
 # tf 1.13.1  ["/home/xuyan/mrqa/xlnet-qa/experiment/multiqa-1e-5-tpu/1564469515", "/home/xuyan/kaggle/bioasq-biobert/model/1585470591"]
 # qa_model = QaModule(['mrqa','biobert'], ["/home/farhad/covid19data/qa_models/1564469515", "/home/farhad/covid19data/qa_models/1585470591"], "/home/farhad/covid19data/qa_models/spiece.model", "/home/farhad/covid19data/qa_models/bert_config.json", "/home/farhad/covid19data/qa_models/vocab.txt")
@@ -39,13 +42,13 @@ def information_retrieval_fake(file_path):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--ans_prob_output_file_path", type=str, default='/home/sudan/AAAI2021/QFS_QA/Debatepedia_Output/train.ans_prob')
-    parser.add_argument("--file_source", type=str, default='/home/sudan/Kaggle/bart/data/Debatepedia/data_fold/1/train.source')
+    parser.add_argument("--ans_prob_output_file_path", type=str, default='/home/sudan/AAAI2021/QFS_QA/Debatepedia_Output/valid.ans_prob')
+    parser.add_argument("--file_source", type=str, default='/home/sudan/Kaggle/bart/data/Debatepedia/data_fold/1/valid.source')
     parser.add_argument("--model_path", type=str, default="/home/xuyan/mrqa/xlnet-qa/experiment/multiqa-1e-5-tpu/1596112521")
     parser.add_argument("--spiece_model", type=str, default="/home/farhad/covid19data/qa_models/spiece.model")
     parser.add_argument("--bert_config", type=str, default="/home/farhad/covid19data/qa_models/bert_config.json")
     parser.add_argument("--bert_vocab", type=str, default="/home/farhad/covid19data/qa_models/vocab.txt")
-    parser.add_argument("--split", type=str, default="train")
+    parser.add_argument("--split", type=str, default="valid")
 
     args = parser.parse_args()
 
@@ -53,12 +56,19 @@ if __name__ == "__main__":
     file_source = args.file_source
     split_flag = args.split
 
-    all_results, data_for_qa = information_retrieval_fake(file_source)
+    all_results, data_for_qa = read_data(file_source)
     qa_model = QaModule(['mrqa'], [args.model_path], args.spiece_model, args.bert_config, args.bert_vocab)
 
     print("Get Answers...")
-    answers = qa_model.getAnswers(data_for_qa, ans_prob_output_file_path)
+    answers, ans_relevance_prob_lines = qa_model.getAnswers(data_for_qa)
     format_answer = qa_model.makeFormatAnswersList(answers)
+
+    #write the answer relevance probability lines to file
+    print("there are all {} lines have been processed".format(len(ans_relevance_prob_lines)))
+    with open(ans_prob_output_file_path, 'w') as fout:
+        for line in ans_relevance_prob_lines:
+            fout.write(line)
+
 
     # save the original answer to json file
     output_dir = '/'.join(ans_prob_output_file_path.split('/')[:-1])

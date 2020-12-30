@@ -57,8 +57,8 @@ class QaModule():
                 idx += 1
         return synthetic
 
-    def mrqaPredictor(self, data, ans_prob_output_path):
-        return mrqa_predictor_qfs(self.mrqaFLAGS, self.mrqa_predict_fn, data, ans_prob_output_path)
+    def mrqaPredictor(self, data):
+        return mrqa_predictor_qfs(self.mrqaFLAGS, self.mrqa_predict_fn, data)
     
     def biobertPredictor(self, data):
         return biobert_predictor(self.bioFLAGS, self.bio_predict_fn, data)
@@ -115,7 +115,7 @@ class QaModule():
         index = self.model_name.index(model_name)
         return self.model_path[index]
 
-    def getAnswers(self, data, ans_prob_output_path):
+    def getAnswers(self, data):
         """
         Output:
             List [{
@@ -129,6 +129,7 @@ class QaModule():
             }]
         """
         answers = []
+        ans_relevance_prob_lines = []
         qas = self.readIR(data)
         for qa in qas:
             question = qa["qas"][0]["question"]
@@ -164,9 +165,10 @@ class QaModule():
             raw_score_bio = 0
             raw_answer_mrqa = ""
             raw_answer_bio = ""
+            ans_relevance_prob_line = ""
 
             if "mrqa" in self.model_name:
-                raw_mrqa = self.mrqaPredictor([qa], ans_prob_output_path)
+                raw_mrqa, ans_relevance_prob_line = self.mrqaPredictor([qa])
                 # get sentence from MRQA
                 raw = raw_mrqa[qa["qas"][0]["id"]]   
                 raw_answer_mrqa = raw[0]
@@ -276,7 +278,9 @@ class QaModule():
             answers[-1]["data"]["raw"].append(answer)
             answers[-1]["data"]["confidence"].append(score)
 
-        return answers
+            ans_relevance_prob_lines.append(ans_relevance_prob_line)
+
+        return answers, ans_relevance_prob_lines
     
     def _compute_softmax(self, scores):
         """Compute softmax probability over scores."""
