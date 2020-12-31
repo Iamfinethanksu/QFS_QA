@@ -380,6 +380,7 @@ def convert_examples_to_features(examples, sp_model, max_seq_length,
     while start_offset < len(all_doc_tokens):
       length = len(all_doc_tokens) - start_offset
       if length > max_tokens_for_doc:
+        print("this is for debug, since the document length is {} which exceed the maximum sequence length 512-64-3".format(length))
         length = max_tokens_for_doc
       doc_spans.append(_DocSpan(start=start_offset, length=length))
       if start_offset + length == len(all_doc_tokens):
@@ -804,9 +805,11 @@ def get_predictions_qfs(all_examples, all_features, all_results, n_best_size,
     
     doc_word_num = len(example.paragraph_text.split())
     doc_words_ans_prob_per_example = [0.0] * doc_word_num 
-    ans_prob_start_index = best_feature_index*FLAGS.doc_stride
-    print("the ans_prob_start_index is {}".format(ans_prob_start_index))
-    doc_words_ans_prob_per_example[ans_prob_start_index : ans_prob_start_index + len(word_to_ans_prob_final[best_feature_index])] = word_to_ans_prob_final[best_feature_index]
+    # this if for the above 'answer not exist situation'
+    if best_non_null_entry.text != "":
+      ans_prob_start_index = best_feature_index*FLAGS.doc_stride
+      print("the ans_prob_start_index is {}".format(ans_prob_start_index))
+      doc_words_ans_prob_per_example[ans_prob_start_index : ans_prob_start_index + len(word_to_ans_prob_final[best_feature_index])] = word_to_ans_prob_final[best_feature_index]
     all_ans_probs.append(doc_words_ans_prob_per_example)
     print("this is the {}th examples".format(example_index))
 

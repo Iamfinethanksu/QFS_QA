@@ -1,0 +1,3 @@
+nohup python3 qfs_QA.py --data_format='duc' --ans_prob_output_file_path='/home/sudan/AAAI2021/data/DUC/DUC_2005/ans_relevance_prob.txt' --file_source='/home/sudan/AAAI2021/data/DUC/DUC_2005' > log_duc_2005.txt &
+nohup python3 qfs_QA.py --data_format='duc' --ans_prob_output_file_path='/home/sudan/AAAI2021/data/DUC/DUC_2006/ans_relevance_prob.txt' --file_source='/home/sudan/AAAI2021/data/DUC/DUC_2006' > log_duc_2006.txt &
+nohup python3 qfs_QA.py --data_format='duc' --ans_prob_output_file_path='/home/sudan/AAAI2021/data/DUC/DUC_2007/ans_relevance_prob.txt' --file_source='/home/sudan/AAAI2021/data/DUC/DUC_2007' > log_duc_2007.txt &

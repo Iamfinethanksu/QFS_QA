@@ -81,7 +81,7 @@ class QaModule():
                 "predict_batch_size": 1,
                 "shuffle_buffer": 2048,
                 "spiece_model_file": self.spiece_model,
-                "max_seq_length": 512,
+                "max_seq_length": 512, #512
                 "doc_stride": 128,
                 "max_query_length": 64,
                 "n_best_size": 5,
